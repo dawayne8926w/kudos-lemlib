@@ -1,6 +1,5 @@
 #include "main.h"
 #include "lemlib/api.hpp"
-#include "UvuvLib/UvuvMain.h"
 /**
  * A callback function for LLEMU's center button.
  *
@@ -25,6 +24,8 @@ pros::Controller master (pros::E_CONTROLLER_MASTER);
 pros::MotorGroup left_side_motors({left_front_motor, left_middle_motor, left_back_motor});
 pros::MotorGroup right_side_motors({right_front_motor, right_middle_motor, right_back_motor});
 pros::Optical intake_optical_sensor(5);
+pros::ADIDigitalOut right_wing(2);
+pros::ADIDigitalOut Left_wing(3);
 
 pros::Rotation cata_rot(9);
 lemlib::Drivetrain_t drivetrain {
@@ -83,7 +84,7 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
 void initialize() {
 	chassis.calibrate(); // calibrate the chassis
     chassis.setPose(0, 0, 0);
-	
+	pros::ADIDigitalOut right_wing();
 }
 
 /**
@@ -278,6 +279,15 @@ void opcontrol() {
         }
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
             reset_cata();
+        }
+
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)){
+            right_wing.set_value(true);
+            Left_wing.set_value(true);
+        }
+        else {
+            right_wing.set_value(false);
+            Left_wing.set_value(false);
         }
     }
 }
